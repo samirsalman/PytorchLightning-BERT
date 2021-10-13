@@ -1,5 +1,5 @@
 from typing import Optional
-from pl_data.BERTDataset import BERTDataset
+from src.pl_data.BERTDataset import BERTDataset
 import pytorch_lightning as pl
 from torch.utils.data import random_split, DataLoader
 import os
