@@ -1,7 +1,7 @@
 import pytorch_lightning as pl
 import torch.nn as nn
 from transformers import AutoModel, AdamW, get_linear_schedule_with_warmup
-from torchmetrics.metrics import Accuracy, F1
+from torchmetrics import Accuracy, F1
 import torch
 import numpy as np
 
