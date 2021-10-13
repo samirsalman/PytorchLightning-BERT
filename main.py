@@ -8,12 +8,14 @@ LABEL_COLUMN = "Sentiment"
 TEXT_COLUMN = "OriginalTweet"
 
 if __name__ == "__main__":
-    train = pd.read_csv("data/Corona_NLP_train.csv")
+    train = pd.read_csv("data/Corona_NLP_train.csv", encoding="latin1")
+    test = pd.read_csv("data/Corona_NLP_test.csv", encoding="latin1")
     train, val = train_test_split(
         train, test_size=0.2, stratify=train[LABEL_COLUMN].values
     )
     train.to_csv("data/Corona_NLP_train.csv")
     val.to_csv("data/Corona_NLP_val.csv")
+    val.to_csv("data/Corona_NLP_test.csv")
 
     print("Creating text datamodule")
 
