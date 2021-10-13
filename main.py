@@ -1,7 +1,7 @@
 import pandas as pd
 import pytorch_lightning as pl
-from src.pl_data.TextDataModule import TextDataModule
-from src.pl_modules.BERTClassifier import BertTextClassifier
+from .src.pl_data.TextDataModule import TextDataModule
+from .src.pl_modules.BERTClassifier import BertTextClassifier
 from sklearn.model_selection import train_test_split
 
 LABEL_COLUMN = "Sentiment"
