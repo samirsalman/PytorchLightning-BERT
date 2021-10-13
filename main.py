@@ -10,6 +10,10 @@ TEXT_COLUMN = "OriginalTweet"
 if __name__ == "__main__":
     train = pd.read_csv("data/Corona_NLP_train.csv", encoding="latin1")
     test = pd.read_csv("data/Corona_NLP_test.csv", encoding="latin1")
+
+    train.dropna(subset=["OriginalTweet", "Sentiment"], inplace=True)
+    test.dropna(subset=["OriginalTweet", "Sentiment"], inplace=True)
+
     train, val = train_test_split(
         train, test_size=0.2, stratify=train[LABEL_COLUMN].values
     )
@@ -55,7 +59,6 @@ if __name__ == "__main__":
         callbacks=[early_stopping],
         deterministic=True,
         gpus=1,
-        enable_progress_bar=True,
         max_epochs=10,
     )
 
