@@ -1,5 +1,5 @@
 import pandas as pd
-import pytorch_lighting as pl
+import pytorch_lightning as pl
 from pl_data.TextDataModule import TextDataModule
 from pl_modules.BERTClassifier import BertTextClassifier
 from sklearn.model_selection import train_test_split
@@ -15,6 +15,8 @@ if __name__ == "__main__":
     train.to_csv("data/Corona_NLP_train.csv")
     val.to_csv("data/Corona_NLP_val.csv")
 
+    print("Creating text datamodule")
+
     text_datamodule = TextDataModule(
         data_dir="data/",
         bert_model="bert-base-cased",
@@ -26,13 +28,16 @@ if __name__ == "__main__":
         val_path="Corona_NLP_val.csv",
         train_batch_size=32,
     )
+    print("Text datamodule created")
 
+    print("Init the model")
     model = BertTextClassifier(
         bert_model="bert-base-cased",
         label_column=LABEL_COLUMN,
         lr=2e-5,
         n_classes=2,
     )
+    print("Model created")
 
     early_stopping = pl.callbacks.EarlyStopping(
         monitor="val_loss",
@@ -42,6 +47,8 @@ if __name__ == "__main__":
         mode="min",
     )
 
+    print("Init the trainer")
+
     trainer = pl.Trainer(
         callbacks=[early_stopping],
         deterministic=True,
@@ -49,5 +56,7 @@ if __name__ == "__main__":
         enable_progress_bar=True,
         max_epochs=10,
     )
+
+    print("Starting the train")
 
     trainer.fit(model=model, datamodule=text_datamodule)
