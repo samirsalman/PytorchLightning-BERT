@@ -1,5 +1,6 @@
 from typing import Any
 import pytorch_lightning as pl
+from transformers import AutoTokenizer
 
 
 def classify_single_example(

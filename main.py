@@ -47,7 +47,7 @@ if __name__ == "__main__":
         bert_model="bert-base-cased",
         label_column=LABEL_COLUMN,
         lr=2e-5,
-        n_classes=2,
+        n_classes=5,
         n_training_steps=32 * 10,
         n_warmup_steps=16,
     )

@@ -38,7 +38,7 @@ class BertTextClassifier(pl.LightningModule):
         self.lr = lr
 
     def forward(self, input_ids, attention_mask, labels=None):
-        _, output = self.bert(input_ids, attention_mask=attention_mask)
+        output = self.bert(input_ids, attention_mask=attention_mask)
         output = self.classifier(output.pooler_output)
         loss = 0
         if labels is not None:

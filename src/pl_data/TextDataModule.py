@@ -69,12 +69,9 @@ class TextDataModule(pl.LightningDataModule):
                 label_column="label",
             )
 
-            encodings = {
-                l: i
-                for (i, l) in enumerate(
-                    self.labelencoder.transform(self.train_data["target"].classes_)
-                )
-            }
+            encodings = dict(
+                zip(self.labelencoder.classes_, range(len(self.labelencoder.classes_)))
+            )
 
             with open("output/labelencoder.json", "w") as le:
                 le.write(json.dumps(encodings))
