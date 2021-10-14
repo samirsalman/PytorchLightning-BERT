@@ -4,6 +4,9 @@ import pytorch_lightning as pl
 from torch.utils.data import random_split, DataLoader
 import os
 import pandas as pd
+from transformers import AutoTokenizer
+from sklearn.preprocessing import LabelEncoder
+import json
 
 
 class TextDataModule(pl.LightningDataModule):
@@ -43,6 +46,10 @@ class TextDataModule(pl.LightningDataModule):
 
         # Assign train/val datasets for use in dataloaders
         if stage == "fit" or stage is None:
+            self.labelencoder = LabelEncoder()
+            self.train_data["label"] = self.labelencoder.fit_transform(
+                self.train_data[self.label_column]
+            )
             self.train_dataset = BERTDataset(
                 data=self.train_data,
                 tokenizer=self.tokenizer,
@@ -51,6 +58,9 @@ class TextDataModule(pl.LightningDataModule):
                 label_column=self.label_column,
             )
 
+            self.val_data["label"] = self.labelencoder.transform(
+                self.val_data[self.label_column]
+            )
             self.val_dataset = BERTDataset(
                 data=self.val_data,
                 tokenizer=self.tokenizer,
@@ -59,8 +69,21 @@ class TextDataModule(pl.LightningDataModule):
                 label_column=self.label_column,
             )
 
+            encodings = {
+                l: i
+                for (i, l) in enumerate(
+                    self.labelencoder.transform(self.train_data["target"].classes_)
+                )
+            }
+
+            with open("output/labelencoder.json", "w") as le:
+                le.write(json.dumps(encodings))
+
         # Assign test dataset for use in dataloader(s)
         if stage == "test" or stage is None:
+            self.test_data["label"] = self.labelencoder.transform(
+                self.test_data[self.label_column]
+            )
             self.test_dataset = BERTDataset(
                 data=self.test_data,
                 tokenizer=self.tokenizer,
