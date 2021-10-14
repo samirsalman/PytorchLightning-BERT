@@ -1,3 +1,4 @@
+from typing import Any
 import pytorch_lightning as pl
 
 
@@ -6,7 +7,18 @@ def classify_single_example(
     sentence: str,
     tokenizer: AutoTokenizer,
     max_token_len: int = 128,
-):
+) -> Any:
+    """Predict a single example (model wrapper)
+
+    Args:
+        model (pl.LightningModule): trained model
+        sentence (str): input sentence
+        tokenizer (AutoTokenizer): same tokenizer used during the training
+        max_token_len (int, optional): max lenght of the input tokens. Defaults to 128.
+
+    Returns:
+        Any: prediction
+    """
 
     encoding = tokenizer.encode_plus(
         sentence,

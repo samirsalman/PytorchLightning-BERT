@@ -16,6 +16,16 @@ class BertTextClassifier(pl.LightningModule):
         n_training_steps=None,
         n_warmup_steps=None,
     ):
+        """Bert Classifier Model
+
+        Args:
+            bert_model (str): huggingface bert model
+            n_classes (int): number of output classes
+            lr (float, optional): learning rate value. Defaults to 2e-5.
+            label_column (str, optional): the name of the label column in the dataframe. Defaults to "label".
+            n_training_steps ([type], optional): optimizer parameter. Defaults to None.
+            n_warmup_steps ([type], optional): optimizer parameter. Defaults to None.
+        """
 
         super().__init__()
         self.bert_model = bert_model

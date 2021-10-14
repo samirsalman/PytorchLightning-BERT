@@ -8,12 +8,16 @@ LABEL_COLUMN = "Sentiment"
 TEXT_COLUMN = "OriginalTweet"
 
 if __name__ == "__main__":
+    # PRE-PROCESSING AREA
+    # read data
     train = pd.read_csv("data/Corona_NLP_train.csv", encoding="latin1")
     test = pd.read_csv("data/Corona_NLP_test.csv", encoding="latin1")
 
+    # drop nan value in the columns: OriginalTweet and Sentiment
     train.dropna(subset=["OriginalTweet", "Sentiment"], inplace=True)
     test.dropna(subset=["OriginalTweet", "Sentiment"], inplace=True)
 
+    # train validation splitting
     train, val = train_test_split(
         train, test_size=0.2, stratify=train[LABEL_COLUMN].values
     )
@@ -23,6 +27,7 @@ if __name__ == "__main__":
 
     print("Creating text datamodule")
 
+    # DATA LOADING AREA
     text_datamodule = TextDataModule(
         data_dir="data/",
         bert_model="bert-base-cased",
@@ -36,6 +41,7 @@ if __name__ == "__main__":
     )
     print("Text datamodule created")
 
+    # MODEL AREA
     print("Init the model")
     model = BertTextClassifier(
         bert_model="bert-base-cased",
@@ -55,6 +61,7 @@ if __name__ == "__main__":
 
     print("Init the trainer")
 
+    # TRAINING AREA
     trainer = pl.Trainer(
         callbacks=[early_stopping],
         deterministic=True,
@@ -64,4 +71,5 @@ if __name__ == "__main__":
 
     print("Starting the train")
 
+    # start the train
     trainer.fit(model=model, datamodule=text_datamodule)
