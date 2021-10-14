@@ -1,7 +1,7 @@
-data_dir: "data/"
-train_path: "Corona_NLP_train.csv"
-val_path: "Corona_NLP_val.csv"
-test_path: "Corona_NLP_test.csv"
-label_column: "Sentiment"
-text_column: "OriginalTweet"
+data_dir: data/
+train_path: Corona_NLP_train.csv
+val_path: Corona_NLP_val.csv
+test_path: Corona_NLP_test.csv
+label_column: Sentiment
+text_column: OriginalTweet
 batch_size: 32

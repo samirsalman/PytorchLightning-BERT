@@ -1,2 +1,2 @@
-model_name: "bert-base-cased"
+model_name: bert-base-case
 max_length: 120

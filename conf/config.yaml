@@ -5,6 +5,8 @@ defaults:
   - optimizer: optimizer
   - callbacks: callbacks
   - training: training
+  - hydra: hydra
+
 
 
 

@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import pytorch_lightning as pl
 from src.pl_data.TextDataModule import TextDataModule
@@ -5,17 +6,25 @@ from src.pl_modules.BERTClassifier import BertTextClassifier
 from sklearn.model_selection import train_test_split
 import hydra
 from omegaconf import DictConfig, OmegaConf
+from hydra.utils import get_original_cwd, to_absolute_path
 
 
 @hydra.main(config_path="conf", config_name="config")
 def main(cfg: DictConfig):
+
     LABEL_COLUMN = cfg.data.label_column
     TEXT_COLUMN = cfg.data.text_column
 
+    os.chdir(get_original_cwd())
+
     # PRE-PROCESSING AREA
     # read data
-    train = pd.read_csv(cfg.data.train_path, encoding="latin1")
-    test = pd.read_csv(cfg.data.test_path, encoding="latin1")
+    train = pd.read_csv(
+        os.path.join(cfg.data.data_dir, cfg.data.train_path), encoding="latin1"
+    )
+    test = pd.read_csv(
+        os.path.join(cfg.data.data_dir, cfg.data.test_path), encoding="latin1"
+    )
 
     # drop nan value in the columns: OriginalTweet and Sentiment
     train.dropna(subset=[TEXT_COLUMN, LABEL_COLUMN], inplace=True)
