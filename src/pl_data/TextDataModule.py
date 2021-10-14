@@ -48,25 +48,25 @@ class TextDataModule(pl.LightningDataModule):
         if stage == "fit" or stage is None:
             self.labelencoder = LabelEncoder()
             self.train_data["label"] = self.labelencoder.fit_transform(
-                self.train_data[self.label_column]
+                self.train_data[self.label_column].values
             )
             self.train_dataset = BERTDataset(
                 data=self.train_data,
                 tokenizer=self.tokenizer,
                 max_token_len=self.max_len,
                 text_column=self.text_column,
-                label_column=self.label_column,
+                label_column="label",
             )
 
             self.val_data["label"] = self.labelencoder.transform(
-                self.val_data[self.label_column]
+                self.val_data[self.label_column].values
             )
             self.val_dataset = BERTDataset(
                 data=self.val_data,
                 tokenizer=self.tokenizer,
                 max_token_len=self.max_len,
                 text_column=self.text_column,
-                label_column=self.label_column,
+                label_column="label",
             )
 
             encodings = {
@@ -82,14 +82,14 @@ class TextDataModule(pl.LightningDataModule):
         # Assign test dataset for use in dataloader(s)
         if stage == "test" or stage is None:
             self.test_data["label"] = self.labelencoder.transform(
-                self.test_data[self.label_column]
+                self.test_data[self.label_column].values
             )
             self.test_dataset = BERTDataset(
                 data=self.test_data,
                 tokenizer=self.tokenizer,
                 max_token_len=self.max_len,
                 text_column=self.text_column,
-                label_column=self.label_column,
+                label_column="label",
             )
 
     def train_dataloader(self):
