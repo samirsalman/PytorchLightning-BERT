@@ -3,62 +3,66 @@ import pytorch_lightning as pl
 from src.pl_data.TextDataModule import TextDataModule
 from src.pl_modules.BERTClassifier import BertTextClassifier
 from sklearn.model_selection import train_test_split
+import hydra
+from omegaconf import DictConfig, OmegaConf
 
-LABEL_COLUMN = "Sentiment"
-TEXT_COLUMN = "OriginalTweet"
 
-if __name__ == "__main__":
+@hydra.main(config_path="conf", config_name="config")
+def main(cfg: DictConfig):
+
+    LABEL_COLUMN = cfg.data.label_column
+    TEXT_COLUMN = cfg.data.text_column
     # PRE-PROCESSING AREA
     # read data
-    train = pd.read_csv("data/Corona_NLP_train.csv", encoding="latin1")
-    test = pd.read_csv("data/Corona_NLP_test.csv", encoding="latin1")
+    train = pd.read_csv(cfg.data.train_path, encoding="latin1")
+    test = pd.read_csv(cfg.data.test_path, encoding="latin1")
 
     # drop nan value in the columns: OriginalTweet and Sentiment
-    train.dropna(subset=["OriginalTweet", "Sentiment"], inplace=True)
-    test.dropna(subset=["OriginalTweet", "Sentiment"], inplace=True)
-
+    train.dropna(subset=[TEXT_COLUMN, LABEL_COLUMN], inplace=True)
+    test.dropna(subset=[TEXT_COLUMN, LABEL_COLUMN], inplace=True)
+    
     # train validation splitting
     train, val = train_test_split(
         train, test_size=0.2, stratify=train[LABEL_COLUMN].values
     )
-    train.to_csv("data/Corona_NLP_train.csv")
-    val.to_csv("data/Corona_NLP_val.csv")
-    val.to_csv("data/Corona_NLP_test.csv")
+    train.to_csv(cfg.data.train_path)
+    val.to_csv(cfg.data.val_path)
+    val.to_csv(cfg.data.test_path)
 
     print("Creating text datamodule")
 
     # DATA LOADING AREA
     text_datamodule = TextDataModule(
-        data_dir="data/",
-        bert_model="bert-base-cased",
+        data_dir=cfg.data.data_dir,
+        bert_model=cfg.bert.model_name,
         text_column=TEXT_COLUMN,
         label_column=LABEL_COLUMN,
-        max_len=120,
-        train_path="Corona_NLP_train.csv",
-        test_path="Corona_NLP_test.csv",
-        val_path="Corona_NLP_val.csv",
-        train_batch_size=32,
+        max_len=cfg.bert.max_length,
+        train_path=cfg.data.train_path,
+        test_path=cfg.data.test_path,
+        val_path=cfg.data.val_path,
+        train_batch_size=cfg.data.batch_size,
     )
     print("Text datamodule created")
 
     # MODEL AREA
     print("Init the model")
     model = BertTextClassifier(
-        bert_model="bert-base-cased",
+        bert_model=cfg.bert.model_name,
         label_column=LABEL_COLUMN,
-        lr=2e-5,
-        n_classes=5,
-        n_training_steps=32 * 10,
-        n_warmup_steps=16,
+        lr=cfg.optimizer.lr,
+        n_classes=cfg.model.num_classes,
+        n_training_steps=cfg.optimizer.n_training_steps,
+        n_warmup_steps=cfg.optimizer.n_warmup_steps,
     )
     print("Model created")
 
     early_stopping = pl.callbacks.EarlyStopping(
-        monitor="val_loss",
-        min_delta=0.00,
-        patience=3,
-        verbose=False,
-        mode="min",
+        monitor=cfg.callbacks.early_stopping.monitor,
+        min_delta=cfg.callbacks.early_stopping.min_delta,
+        patience=cfg.callbacks.early_stopping.patience,
+        verbose=cfg.callbacks.early_stopping.verbose,
+        mode=cfg.callbacks.early_stopping.mode,
     )
 
     print("Init the trainer")
@@ -66,12 +70,16 @@ if __name__ == "__main__":
     # TRAINING AREA
     trainer = pl.Trainer(
         callbacks=[early_stopping],
-        deterministic=True,
+        deterministic=cfg.training.deterministic,
         gpus=1,
-        max_epochs=10,
+        max_epochs=cfg.training.max_epochs,
     )
 
     print("Starting the train")
 
     # start the train
     trainer.fit(model=model, datamodule=text_datamodule)
+
+
+if __name__ == "__main__":
+    main()

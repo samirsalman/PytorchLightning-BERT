@@ -1,0 +1,2 @@
+model_name: "bert-base-cased"
+max_length: 120

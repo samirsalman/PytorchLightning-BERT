@@ -1,0 +1,6 @@
+early_stop:
+  monitor: val_loss
+  min_delta: 0.00,
+  patience: 3,
+  verbose: False,
+  mode: min

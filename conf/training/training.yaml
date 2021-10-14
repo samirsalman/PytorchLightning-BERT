@@ -1,0 +1,2 @@
+deterministic: True
+max_epochs: 10
