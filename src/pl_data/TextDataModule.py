@@ -28,9 +28,13 @@ class TextDataModule(pl.LightningDataModule):
         self.test_path = test_path
         self.val_path = val_path
 
-        self.train_data = pd.read_csv(os.path.join(data_dir, train_path))
-        self.test_data = pd.read_csv(os.path.join(data_dir, test_path))
-        self.val_data = pd.read_csv(os.path.join(data_dir, val_path))
+        self.train_data = pd.read_csv(
+            os.path.join(data_dir, train_path), encoding="latin1"
+        )
+        self.test_data = pd.read_csv(
+            os.path.join(data_dir, test_path), encoding="latin1"
+        )
+        self.val_data = pd.read_csv(os.path.join(data_dir, val_path), encoding="latin1")
 
         self.train_batch_size = train_batch_size
 
@@ -73,7 +77,7 @@ class TextDataModule(pl.LightningDataModule):
                 zip(self.labelencoder.classes_, range(len(self.labelencoder.classes_)))
             )
 
-            with open("output/labelencoder.json", "w") as le:
+            with open("outputs/labelencoder.json", "w") as le:
                 le.write(json.dumps(encodings))
 
         # Assign test dataset for use in dataloader(s)
@@ -91,11 +95,14 @@ class TextDataModule(pl.LightningDataModule):
 
     def train_dataloader(self):
         return DataLoader(
-            self.train_dataset, batch_size=self.train_batch_size, shuffle=True
+            self.train_dataset,
+            batch_size=self.train_batch_size,
+            shuffle=True,
+            collate_fn=lambda x: x,
         )
 
     def val_dataloader(self):
-        return DataLoader(self.val_dataset, batch_size=32)
+        return DataLoader(self.val_dataset, batch_size=32, collate_fn=lambda x: x)
 
     def test_dataloader(self):
-        return DataLoader(self.test_dataset, batch_size=32)
+        return DataLoader(self.test_dataset, batch_size=32, collate_fn=lambda x: x)

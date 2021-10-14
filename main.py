@@ -34,9 +34,10 @@ def main(cfg: DictConfig):
     train, val = train_test_split(
         train, test_size=0.2, stratify=train[LABEL_COLUMN].values
     )
-    train.to_csv(cfg.data.train_path)
-    val.to_csv(cfg.data.val_path)
-    val.to_csv(cfg.data.test_path)
+
+    train.to_csv(os.path.join(cfg.data.data_dir, cfg.data.train_path))
+    val.to_csv(os.path.join(cfg.data.data_dir, cfg.data.val_path))
+    test.to_csv(os.path.join(cfg.data.data_dir, cfg.data.test_path))
 
     print("Creating text datamodule")
 
@@ -67,11 +68,11 @@ def main(cfg: DictConfig):
     print("Model created")
 
     early_stopping = pl.callbacks.EarlyStopping(
-        monitor=cfg.callbacks.early_stopping.monitor,
-        min_delta=cfg.callbacks.early_stopping.min_delta,
-        patience=cfg.callbacks.early_stopping.patience,
-        verbose=cfg.callbacks.early_stopping.verbose,
-        mode=cfg.callbacks.early_stopping.mode,
+        monitor=cfg.callbacks.early_stop.monitor,
+        min_delta=cfg.callbacks.early_stop.min_delta,
+        patience=cfg.callbacks.early_stop.patience,
+        verbose=cfg.callbacks.early_stop.verbose,
+        mode=cfg.callbacks.early_stop.mode,
     )
 
     print("Init the trainer")

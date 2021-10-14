@@ -9,7 +9,7 @@ class BERTDataset(Dataset):
         self,
         data: pd.DataFrame,
         tokenizer: AutoTokenizer,
-        max_token_len: int = 128,
+        max_token_len: int = 120,
         label_column: str = "label",
         text_column: str = "text",
     ):
