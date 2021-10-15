@@ -98,11 +98,10 @@ class TextDataModule(pl.LightningDataModule):
             self.train_dataset,
             batch_size=self.train_batch_size,
             shuffle=True,
-            collate_fn=lambda x: x,
         )
 
     def val_dataloader(self):
-        return DataLoader(self.val_dataset, batch_size=32, collate_fn=lambda x: x)
+        return DataLoader(self.val_dataset, batch_size=32)
 
     def test_dataloader(self):
-        return DataLoader(self.test_dataset, batch_size=32, collate_fn=lambda x: x)
+        return DataLoader(self.test_dataset, batch_size=32)
