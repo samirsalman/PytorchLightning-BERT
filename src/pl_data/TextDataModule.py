@@ -44,16 +44,16 @@ class TextDataModule(pl.LightningDataModule):
         self.text_column = text_column
 
     def prepare_data(self):
+        self.labelencoder = LabelEncoder()
         self.tokenizer = AutoTokenizer.from_pretrained(self.bert_model)
 
     def setup(self, stage: Optional[str] = None):
 
         # Assign train/val datasets for use in dataloaders
         if stage == "fit" or stage is None:
-            self.labelencoder = LabelEncoder()
             self.train_data["label"] = self.labelencoder.fit_transform(
                 self.train_data[self.label_column].values
-            )
+            )[0]
             self.train_dataset = BERTDataset(
                 data=self.train_data,
                 tokenizer=self.tokenizer,
@@ -64,7 +64,7 @@ class TextDataModule(pl.LightningDataModule):
 
             self.val_data["label"] = self.labelencoder.transform(
                 self.val_data[self.label_column].values
-            )
+            )[0]
             self.val_dataset = BERTDataset(
                 data=self.val_data,
                 tokenizer=self.tokenizer,
@@ -84,7 +84,7 @@ class TextDataModule(pl.LightningDataModule):
         if stage == "test" or stage is None:
             self.test_data["label"] = self.labelencoder.transform(
                 self.test_data[self.label_column].values
-            )
+            )[0]
             self.test_dataset = BERTDataset(
                 data=self.test_data,
                 tokenizer=self.tokenizer,

@@ -64,7 +64,6 @@ class BertTextClassifier(pl.LightningModule):
         loss, outputs = self(input_ids, attention_mask, labels)
         accuracy = Accuracy(outputs, labels)
         f1 = F1(outputs, labels, num_classes=len(np.unique(labels)))
-
         self.log("val_loss", loss, prog_bar=True, logger=True)
         self.log("val_accuracy", accuracy, prog_bar=True, logger=True)
         self.log("val_f1", f1, prog_bar=True, logger=True)

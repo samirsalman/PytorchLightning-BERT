@@ -25,7 +25,7 @@ class BERTDataset(Dataset):
     def __getitem__(self, index: int):
         data_row = self.data.iloc[index]
         text = data_row[self.text_column]
-        labels = data_row[self.label_column]
+        label = data_row[self.label_column]
         encoding = self.tokenizer.encode_plus(
             text,
             add_special_tokens=True,
@@ -36,9 +36,10 @@ class BERTDataset(Dataset):
             return_attention_mask=True,
             return_tensors="pt",
         )
+
         return dict(
             text=text,
             input_ids=encoding["input_ids"].flatten(),
             attention_mask=encoding["attention_mask"].flatten(),
-            labels=torch.FloatTensor(labels),
+            labels=torch.tensor(label, dtype=torch.int32),
         )
