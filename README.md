@@ -9,8 +9,22 @@
 
 PytorchLightining implementation of a BERT Classifier
 
+--- DESCRIPTION
+
+
+## Hydra Configuration
+
+## Datamodule
+
+## Model
+
 
 ## Run the project
+
+### Pre-run steps
+- Change hydra configuration, based on experiment purposes
+- Check data
+- Check model
 
 ### With Docker
 From the project directory open the cmd and launch the following commands:
