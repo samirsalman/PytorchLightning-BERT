@@ -54,6 +54,7 @@ n_training_steps=None,
 n_warmup_steps=None,
 ```
 Each of that arguments is given by [training, data, model and bert] config files, which you can find in the confi directory.
+By default the BERT classifier uses the Accuracy and F1 metrics.
 
 ## Run the project
 
