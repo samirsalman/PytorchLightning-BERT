@@ -7,12 +7,20 @@
     <a href="https://www.docker.com/"><img alt="Dockerfile" src="https://img.shields.io/static/v1?label=Dockerfile&color=blue&logo=docker&message=available"></a>
 </p>
 
-PytorchLightining implementation of a BERT Classifier
+PytorchLigtning BERT is an implementation of BERT for classification tasks using PytorchLightning. PL-BERT is composed of 3 different parts:
+- Configs: Hydra configuration about data, training, and bert model
+- Datamodule: PytorchLigtning datamodule that abstract textual data preprocessing step. You can use it with all kinds of textual data for classification tasks.
+- Classifier: PytorchLigtning module that implements a BERT-based classifier. 
 
---- DESCRIPTION
 
 
 ## Hydra Configuration
+
+You can reuse this template in any text classification task, changing hydra configurations. In the conf file, you can find some directories, each of them contains a configuration of a specific component. For example, bert directory contains the ```bert.yaml``` file, which specifies the configuration of the bert model used in your experiments. By default, it contains:
+```yaml
+model_name: bert-base-cased
+max_length: 120
+```
 
 ## Datamodule
 
