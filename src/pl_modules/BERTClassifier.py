@@ -4,6 +4,7 @@ from transformers import AutoModel, AdamW, get_linear_schedule_with_warmup
 from torchmetrics import Accuracy, F1
 import torch
 import numpy as np
+import logging
 
 
 class BertTextClassifier(pl.LightningModule):
@@ -15,6 +16,7 @@ class BertTextClassifier(pl.LightningModule):
         label_column: str = "label",
         n_training_steps=None,
         n_warmup_steps=None,
+        logger=None,
     ):
         """Bert Classifier Model
 
@@ -32,17 +34,20 @@ class BertTextClassifier(pl.LightningModule):
         self.label_column = label_column
         self.bert = AutoModel.from_pretrained(bert_model, return_dict=True)
         self.classifier = nn.Linear(self.bert.config.hidden_size, n_classes)
+        self.n_classes = n_classes
         self.n_training_steps = n_training_steps
         self.n_warmup_steps = n_warmup_steps
-        self.criterion = nn.NLLLoss()
+        self.criterion = nn.CrossEntropyLoss()
         self.lr = lr
+        self.f1 = F1(num_classes=n_classes, average="macro")
+        self.accuracy = Accuracy(num_classes=n_classes, average="macro")
 
     def forward(self, input_ids, attention_mask, labels=None):
-        output = self.bert(input_ids, attention_mask=attention_mask)
+        output = self.bert(input_ids=input_ids, attention_mask=attention_mask)
         output = self.classifier(output.pooler_output)
         loss = 0
         if labels is not None:
-            loss = self.criterion(output, labels)
+            loss = self.criterion(output, labels.long())
         return loss, output
 
     def training_step(self, batch, batch_idx):
@@ -50,8 +55,9 @@ class BertTextClassifier(pl.LightningModule):
         attention_mask = batch["attention_mask"]
         labels = batch["labels"]
         loss, outputs = self(input_ids, attention_mask, labels)
-        accuracy = Accuracy(outputs, labels)
-        f1 = F1(outputs, labels, num_classes=len(np.unique(labels)))
+        outputs = torch.argmax(outputs, dim=1)
+        accuracy = self.accuracy(outputs, labels)
+        f1 = self.f1(outputs, labels)
         self.log("train_loss", loss, prog_bar=True, logger=True)
         self.log("train_accuracy", accuracy, prog_bar=True, logger=True)
         self.log("train_f1", f1, prog_bar=True, logger=True)
@@ -62,8 +68,10 @@ class BertTextClassifier(pl.LightningModule):
         attention_mask = batch["attention_mask"]
         labels = batch["labels"]
         loss, outputs = self(input_ids, attention_mask, labels)
-        accuracy = Accuracy(outputs, labels)
-        f1 = F1(outputs, labels, num_classes=len(np.unique(labels)))
+        outputs = torch.argmax(outputs, dim=1)
+        accuracy = self.accuracy(outputs, labels)
+        f1 = self.f1(outputs, labels)
+
         self.log("val_loss", loss, prog_bar=True, logger=True)
         self.log("val_accuracy", accuracy, prog_bar=True, logger=True)
         self.log("val_f1", f1, prog_bar=True, logger=True)
@@ -75,23 +83,13 @@ class BertTextClassifier(pl.LightningModule):
         attention_mask = batch["attention_mask"]
         labels = batch["labels"]
         loss, outputs = self(input_ids, attention_mask, labels)
-        accuracy = Accuracy(outputs, labels)
-        f1 = F1(outputs, labels, num_classes=len(np.unique(labels)))
+        outputs = torch.argmax(outputs, dim=1)
+        accuracy = self.accuracy(outputs, labels)
+        f1 = self.f1(outputs, labels)
         self.log("test_loss", loss, prog_bar=True, logger=True)
         self.log("test_accuracy", accuracy, prog_bar=True, logger=True)
         self.log("test_f1", f1, prog_bar=True, logger=True)
         return loss
-
-    # def training_epoch_end(self, outputs):
-    #     labels = []
-    #     predictions = []
-    #     for output in outputs:
-    #         for out_labels in output["labels"].detach().cpu():
-    #             labels.append(out_labels)
-    #         for out_predictions in output["predictions"].detach().cpu():
-    #             predictions.append(out_predictions)
-    #     labels = torch.stack(labels).int()
-    #     predictions = torch.stack(predictions)
 
     def configure_optimizers(self):
         optimizer = AdamW(self.parameters(), lr=self.lr)
