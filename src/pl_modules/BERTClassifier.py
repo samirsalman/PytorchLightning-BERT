@@ -16,7 +16,6 @@ class BertTextClassifier(pl.LightningModule):
         label_column: str = "label",
         n_training_steps=None,
         n_warmup_steps=None,
-        logger=None,
     ):
         """Bert Classifier Model
 
