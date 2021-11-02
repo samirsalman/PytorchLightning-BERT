@@ -8,9 +8,9 @@
 </p>
 
 PytorchLigtning BERT is a **reusable** implementation of BERT for classification tasks using PytorchLightning. PL-BERT is composed of 3 different parts:
-- Hydra Configuration: Hydra configuration about data, training, and bert model
-- Datamodule: PytorchLigtning datamodule that abstract textual data preprocessing step. You can use it with all kinds of textual data for classification tasks.
-- Model: PytorchLigtning module that implements a BERT-based classifier. 
+- **Hydra Configuration**: Hydra configuration about data, training, and bert model
+- **Datamodule**: PytorchLigtning datamodule that abstract textual data preprocessing step. You can use it with all kinds of textual data for classification tasks.
+- **Model**: PytorchLigtning module that implements a BERT-based classifier. 
 
 
 
