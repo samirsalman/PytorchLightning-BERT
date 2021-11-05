@@ -26,7 +26,7 @@ The
 ## Datamodule
 ```PytorchLightning-BERT/src/pl_data/TextDataModule.py```
 
-The datamodule component contains all data logic. It take in input the textual dataset, converts string labels in integer labels and create the train, test and optionally validation dataloaders. The input arguments of TextDataModule are:
+The datamodule component contains all torch data logic. It take in input the textual dataset (BERTDataset.py), converts string labels in integer labels and create the train, test and optionally validation dataloaders. The input arguments of TextDataModule are:
 ```python
 train_path: str,
 test_path: str,
@@ -39,13 +39,13 @@ train_batch_size: int = 32,
 max_len: int = 120,
 ```
 
-Each of that arguments is given by [data and bert] config files, which you can find in the confi directory.
+Each argument is given by [data and bert] config files, which you can find in the config directory.
 
 
 ## Model
 ```PytorchLightning-BERT/src/pl_modules/BERTClassifier.py```
 
-The model is a PytorchLightning module that contains the model implementation. In our project we implement a BERT-based classifier, you can create any model for your specific task. The input argument of BERTClassifier.py are:
+The model is a PytorchLightning module that contains the model implementation. In our project we implement a BERT-based classifier, you can create any model for your specific task. The input arguments of BERTClassifier.py are:
 ```python
 bert_model: str,
 n_classes: int,
@@ -54,8 +54,53 @@ label_column: str = "label",
 n_training_steps=None,
 n_warmup_steps=None,
 ```
-Each of that arguments is given by [training, data, model and bert] config files, which you can find in the confi directory.
-By default the BERT classifier uses the Accuracy and F1 metrics.
+Each argument is given by [training, data, model and bert] config files, which you can find in the config directory.
+
+## Add new metric
+
+By default the BERT classifier uses the Accuracy and F1 metrics, but you can add any kind of metric from the **torchmetric package**. To add a new metric you can add it in the __init__ of BERTClassifier.py, like already done for F1 and Accuracy:
+```python
+from torchmetrics import Accuracy, F1
+
+ class BertTextClassifier(pl.LightningModule):  
+ 
+   def __init__(
+        self,
+        bert_model: str,
+        n_classes: int,
+        lr: float = 2e-5,
+        label_column: str = "label",
+        n_training_steps=None,
+        n_warmup_steps=None,
+    ):
+        super().__init__()
+        ...
+        # init F1 function
+        self.f1 = F1(num_classes=n_classes, average="macro")
+        
+        # init Accuracy function
+        self.accuracy = Accuracy(num_classes=n_classes, average="macro")
+```
+
+And to compute and log the metrics you should add the metric computation in the training_step, validation_step and test_step methods. 
+
+```python
+def training_step(self, batch, batch_idx):
+    ...
+    #loss, outputs = self(input_ids, attention_mask, labels)
+    #outputs = torch.argmax(outputs, dim=1)
+    
+    # compute accuracy using self.accuracy function defined in the __init__
+    accuracy = self.accuracy(outputs, labels)
+    
+    # compute f1 using self.f1 function defined in the __init__
+    f1 = self.f1(outputs, labels)
+    
+    #self.log("train_loss", loss, prog_bar=True, logger=True)
+    self.log("train_accuracy", accuracy, prog_bar=True, logger=True)
+    self.log("train_f1", f1, prog_bar=True, logger=True)
+    #return {"loss": loss, "predictions": outputs, "labels": labels}
+```
 
 ## Run the project
 
@@ -63,6 +108,7 @@ By default the BERT classifier uses the Accuracy and F1 metrics.
 - Change hydra configuration, based on experiment purposes like dicussed in Hydra Configuration section.
 - Check data
 - Check model
+- Run main.py using: ```python main.py```
 
 ### Local or Cloud environment
 You can install all dependencies running the following command from the project root directory:
