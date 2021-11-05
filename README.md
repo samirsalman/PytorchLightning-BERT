@@ -110,6 +110,11 @@ def training_step(self, batch, batch_idx):
 - Check model
 - Run main.py using: ```python main.py```
 
+Hydra allow you to override configuration settings using cmd arguments, for example you can use a different bert model and a different learning rate value using the following bash command:
+```bash 
+python main.py --bert.model_name=roberta-large --optimizer.lr=3e-5
+```
+
 ### Local or Cloud environment
 You can install all dependencies running the following command from the project root directory:
 ```pip install -r requirements.txt```
