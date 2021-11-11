@@ -9,7 +9,7 @@ from omegaconf import DictConfig, OmegaConf
 from hydra.utils import get_original_cwd, to_absolute_path
 
 
-@hydra.main(config_path="conf", config_name="config")
+@hydra.main(config_path="configs", config_name="config")
 def main(cfg: DictConfig):
 
     LABEL_COLUMN = cfg.data.label_column
