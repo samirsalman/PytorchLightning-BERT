@@ -16,7 +16,7 @@ PytorchLigtning BERT is a **modular, tiny and reusable** implementation of BERT 
 
 ## Hydra Configuration
 
-You can use this template in any text classification task, just changing hydra configurations. In the config directory, you can find the yaml configuration files of each specific component. For example, bert directory contains the ```bert.yaml``` file, which specifies the configuration of the bert model used in your experiments. By default, it contains:
+You can use this template in any text classification task, just changing hydra configurations. In the configs directory, you can find the yaml configuration files of each specific component. For example, bert directory contains the ```bert.yaml``` file, which specifies the configuration of the bert model used in your experiments. By default, it contains:
 ```yaml
 model_name: bert-base-cased
 max_length: 120
@@ -39,7 +39,7 @@ train_batch_size: int = 32,
 max_len: int = 120,
 ```
 
-Each argument is given by [data and bert] config files, which you can find in the config directory.
+Each argument is given by [data and bert] config files, which you can find in the configs directory.
 
 
 ## Model
@@ -54,7 +54,7 @@ label_column: str = "label",
 n_training_steps=None,
 n_warmup_steps=None,
 ```
-Each argument is given by [training, data, model and bert] config files, which you can find in the config directory.
+Each argument is given by [training, data, model and bert] config files, which you can find in the configs directory.
 
 ## Add new metric
 
