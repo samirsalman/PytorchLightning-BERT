@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from hydra.utils import get_original_cwd, to_absolute_path
+from pytorch_lightning.callbacks import RichProgressBar
 
 
 @hydra.main(config_path="configs", config_name="config")
@@ -79,7 +80,12 @@ def main(cfg: DictConfig):
 
     # TRAINING AREA
     trainer = pl.Trainer(
-        callbacks=[early_stopping],
+        callbacks=[
+            early_stopping,
+            RichProgressBar(
+                refresh_rate_per_second=10,
+            ),
+        ],
         deterministic=cfg.training.deterministic,
         gpus=1,
         max_epochs=cfg.training.max_epochs,
