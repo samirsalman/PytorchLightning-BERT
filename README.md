@@ -6,6 +6,9 @@
     <a href="https://hydra.cc/"><img alt="Conf: hydra" src="https://img.shields.io/badge/conf-hydra-blue"></a>
     <a href="https://www.docker.com/"><img alt="Dockerfile" src="https://img.shields.io/static/v1?label=Dockerfile&color=blue&logo=docker&message=available"></a>
 </p>
+<p align="center">
+<img src="https://github.com/samirsalman/PytorchLightning-BERT/blob/master/logo.png"/>
+</p>
 
 PytorchLigtning BERT is a **modular, tiny and reusable** implementation of BERT for classification tasks using PytorchLightning. PL-BERT is composed of 3 parts:
 - **Hydra Configuration**: Hydra configuration about data, training, and bert model
