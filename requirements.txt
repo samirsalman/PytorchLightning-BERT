@@ -8,4 +8,4 @@ pytorch_lightning==1.5.1
 scikit_learn==1.0
 torchmetrics==0.5.1
 transformers==4.11.3
-rich
+rich==10.13.0
