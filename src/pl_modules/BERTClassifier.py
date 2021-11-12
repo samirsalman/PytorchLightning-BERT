@@ -57,9 +57,15 @@ class BertTextClassifier(pl.LightningModule):
         outputs = torch.argmax(outputs, dim=1)
         accuracy = self.accuracy(outputs, labels)
         f1 = self.f1(outputs, labels)
-        self.log("train_loss", loss, prog_bar=True, logger=True)
-        self.log("train_accuracy", accuracy, prog_bar=True, logger=True)
-        self.log("train_f1", f1, prog_bar=True, logger=True)
+        self.log("train_loss", loss, prog_bar=True, logger=True, batch_size=len(batch))
+        self.log(
+            "train_accuracy",
+            accuracy,
+            prog_bar=True,
+            logger=True,
+            batch_size=len(batch),
+        )
+        self.log("train_f1", f1, prog_bar=True, logger=True, batch_size=len(batch))
         return {"loss": loss, "predictions": outputs, "labels": labels}
 
     def validation_step(self, batch, batch_idx):
@@ -71,9 +77,11 @@ class BertTextClassifier(pl.LightningModule):
         accuracy = self.accuracy(outputs, labels)
         f1 = self.f1(outputs, labels)
 
-        self.log("val_loss", loss, prog_bar=True, logger=True)
-        self.log("val_accuracy", accuracy, prog_bar=True, logger=True)
-        self.log("val_f1", f1, prog_bar=True, logger=True)
+        self.log("val_loss", loss, prog_bar=True, logger=True, batch_size=len(batch))
+        self.log(
+            "val_accuracy", accuracy, prog_bar=True, logger=True, batch_size=len(batch)
+        )
+        self.log("val_f1", f1, prog_bar=True, logger=True, batch_size=len(batch))
 
         return loss
 
@@ -85,9 +93,11 @@ class BertTextClassifier(pl.LightningModule):
         outputs = torch.argmax(outputs, dim=1)
         accuracy = self.accuracy(outputs, labels)
         f1 = self.f1(outputs, labels)
-        self.log("test_loss", loss, prog_bar=True, logger=True)
-        self.log("test_accuracy", accuracy, prog_bar=True, logger=True)
-        self.log("test_f1", f1, prog_bar=True, logger=True)
+        self.log("test_loss", loss, prog_bar=True, logger=True, batch_size=len(batch))
+        self.log(
+            "test_accuracy", accuracy, prog_bar=True, logger=True, batch_size=len(batch)
+        )
+        self.log("test_f1", f1, prog_bar=True, logger=True, batch_size=len(batch))
         return loss
 
     def configure_optimizers(self):
