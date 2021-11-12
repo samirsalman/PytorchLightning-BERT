@@ -109,8 +109,8 @@ def training_step(self, batch, batch_idx):
 
 ### Pre-run steps
 - Change hydra configuration, based on experiment purposes like dicussed in Hydra Configuration section.
-- Check data
-- Check model
+- Check the data
+- Check the model
 - Run main.py using: ```python main.py```
 
 **Hydra allow you to override configuration settings using cmd arguments, for example you can use a different bert model and a different learning rate value using the following bash command:**
